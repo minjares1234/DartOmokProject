@@ -1,5 +1,6 @@
 import 'dart:io';
 
+
 // OmokView class handles user input and output
 class OmokView {
   // Method to prompt user for the server URL
@@ -31,6 +32,19 @@ class OmokView {
       print("Invalid input. Defaulting to strategy 1."); // Handle invalid input
       return 1; // Return default if parsing fails
     }
+  }
+
+  String prompForMove(){
+    stdout.write('Enter cordinate of Move '); // Display prompt
+    var inputMove = stdin.readLineSync(); // Read input from user
+
+    while(true) {
+      stdout.write('Enter cordinate of Move '); // Display prompt
+      inputMove = stdin.readLineSync(); // Read input from user
+
+    }
+
+    return "";
   }
 
   // Method to display error messages
