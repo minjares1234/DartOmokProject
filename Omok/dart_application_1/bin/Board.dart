@@ -1,4 +1,5 @@
 class Board{
   var board = [];
-  var boardDementions = [15,15];
+  var xRange = [1,15];
+  var yRange = [1,15];
 }

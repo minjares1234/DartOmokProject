@@ -1,13 +1,15 @@
 import 'OmokModel.dart';
 import 'OmokView.dart';
+import 'Board.dart';
 
 // OmokController coordinates the Model and View to handle game logic
 class OmokController {
   final OmokModel model; // Reference to the model for data handling
   final OmokView view; // Reference to the view for user interaction
+  final Board board;
 
   // Constructor that initializes model and view references
-  OmokController(this.model, this.view);
+  OmokController(this.model, this.view, this.board);
 
   // Main method to start the game and fetch strategies
   Future<void> startGame() async {
@@ -36,4 +38,10 @@ class OmokController {
       view.displayError(e.toString()); // Display any errors encountered
     }
   }
+
+  void moveTile(){
+    var m = view.promptMove(board);
+  }
+
+
 }
