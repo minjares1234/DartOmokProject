@@ -2,14 +2,23 @@ import 'OmokModel.dart';
 import 'OmokView.dart';
 import 'Board.dart';
 
+/// The `OmokController` class is responsible for coordinating the game flow between the model, view, and board.
 class OmokController {
+  /// The model that handles server communication and game logic.
   final OmokModel model;
+
+  /// The view that handles user input and output.
   final OmokView view;
+
+  /// The board that maintains the current state of the game.
   final Board b;
 
+  /// Constructor for the `OmokController` class.
   OmokController(this.model, this.view, this.b);
 
+  /// Starts the main game loop, handling user input, server communication, and game state updates.
   Future<void> startGame() async {
+    // Continuously prompt the user for a valid server URL until successful.
     while (true) {
       var userUrl = view.promptForURL("https://www.cs.utep.edu/cheon/cs3360/project/omok");
 
@@ -26,33 +35,31 @@ class OmokController {
     }
 
     try {
+      // Fetch available strategies from the server.
       List<String> strategies = await model.fetchStrategies();
       view.displayStrategies(strategies);
       int inputStrategie = view.promptForStrategySelection();
 
+      // Start a new game with the chosen strategy.
       await model.startNewGame(strategies[inputStrategie - 1]);
       print('New game started with strategy: ${strategies[inputStrategie - 1]}');
 
-      // Game loop
+      // Main game loop.
       while (true) {
+        // Display the current board state.
         view.displayBoard(b.board);
         List<int> move = view.promptMove(b);
 
-        // Adjust indices to be zero-based
-        int x = move[0] - 1;
-        int y = move[1] - 1;
+        // Check if the selected position is empty before placing a stone.
+        if (b.isEmpty(move[0], move[1])) {
+          b.placeStone(move[0], move[1], 'O'); // Place the player's stone.
+          var response = await model.makeMove(move[0], move[1]); // Send the move to the server.
 
-        if (b.isEmpty(y, x)) { // Correct the order to y (row), x (column)
-          b.placeStone(y, x, 'O'); // Place player's stone on the board
-          var response = await model.makeMove(x, y); // Ensure correct parameter order
-
+          // Handle server response.
           if (response['response']) {
-            int compX = response['move']['x'];
-            int compY = response['move']['y'];
-            b.placeStone(compY, compX, 'X'); // Place computer's stone on the board
+            b.placeStone(response['move']['x'], response['move']['y'], 'X'); // Place the computer's stone.
 
-            view.displayBoard(b.board); // Display updated board
-
+            // Check if the game has ended with a win or draw.
             if (response['ack_move']['isWin'] == true) {
               view.displayGameResult('You win!');
               view.highlightWinningRow(response['ack_move']['row']);
@@ -66,15 +73,17 @@ class OmokController {
               break;
             }
           } else {
+            // Display an error message if the server response is negative.
             view.displayError(response['reason']);
           }
         } else {
-          print("Error: Place not empty, (${y + 1}, ${x + 1})");
+          // Inform the user if the selected position is already occupied.
+          print("Error: Place not empty, (${move[0] + 1}, ${move[1] + 1})");
         }
       }
     } catch (e) {
+      // Display any errors that occur during the game.
       view.displayError(e.toString());
     }
   }
 }
-

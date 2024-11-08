@@ -1,50 +1,59 @@
 import 'dart:io';
 import 'Board.dart';
 
-
-// OmokView class handles user input and output
+/// The `OmokView` class handles user interactions and game output for the Omok game.
 class OmokView {
-  // Method to prompt user for the server URL
+  /// Prompts the user for the server URL.
+  ///
+  /// If the user input is empty, the [defaultURL] will be returned.
+  ///
+  /// Returns a [String] representing the URL provided by the user or the default URL.
   String promptForURL(String defaultURL) {
-    stdout.write(
-        'Enter the server URL [default: $defaultURL]: '); // Display prompt
-    var inputUrl = stdin.readLineSync(); // Read input from user
-    // Return user input or default URL if input is empty
+    stdout.write('Enter the server URL [default: $defaultURL]: ');
+    var inputUrl = stdin.readLineSync();
     return (inputUrl != null && inputUrl.isNotEmpty) ? inputUrl : defaultURL;
   }
 
-  // Method to display available strategies to the user
+  /// Displays available strategies for the user to choose from.
+  ///
+  /// [strategies] is a list of available strategy names.
   void displayStrategies(List<String> strategies) {
-    stdout.write('Select a server strategy: '); // Display prompt for selection
+    stdout.write('Select a server strategy: ');
     for (var i = 0; i < strategies.length; i++) {
-      stdout.write('${i + 1}. ${strategies[i]} '); // List strategies
+      stdout.write('${i + 1}. ${strategies[i]} ');
     }
-    stdout.write('[default: 1]: '); // Prompt for default choice
+    stdout.write('[default: 1]: ');
   }
 
-  // Method to prompt user for strategy selection and return selection as an integer
+  /// Prompts the user to select a strategy.
+  ///
+  /// Repeatedly prompts until a valid selection (1 or 2) is made.
+  /// Returns an [int] representing the user's selection.
   int promptForStrategySelection() {
     while (true) {
       stdout.write('Enter strategy (1 or 2): ');
-      var line = stdin.readLineSync(); // Read user input
+      var line = stdin.readLineSync();
       try {
         int selection = (line != null && line.trim().isNotEmpty)
             ? int.parse(line)
-            : 1; // Parse input or use default
+            : 1; // Default to 1 if input is empty
 
-        // Check if the input is either 1 or 2
         if (selection == 1 || selection == 2) {
           return selection;
         } else {
           print("Invalid input. Please enter 1 or 2.");
         }
       } catch (e) {
-        print("Invalid input. Please enter 1 or 2."); // Handle non-integer input
+        print("Invalid input. Please enter 1 or 2.");
       }
     }
   }
 
-  // Method to prompt for move coordinates and return them as an array of two integers
+  /// Prompts the user for move coordinates.
+  ///
+  /// Validates the input to ensure it is within the board range.
+  ///
+  /// Returns a [List<int>] containing the x and y coordinates of the move.
   List<int> promptMove(Board b) {
     int xLowerRange = b.xRange[0];
     int yLowerRange = b.yRange[0];
@@ -52,18 +61,17 @@ class OmokView {
     int yHigherRange = b.yRange[1];
 
     while (true) {
-      stdout.write('Enter coordinates of x and y ($xLowerRange - $xHigherRange e.g., "1 2"): '); // Display prompt
-      var inputMove = stdin.readLineSync(); // Read input from user
+      stdout.write('Enter coordinates of x and y ($xLowerRange - $xHigherRange e.g., "1 2"): ');
+      var inputMove = stdin.readLineSync();
 
       if (inputMove != null && inputMove.isNotEmpty) {
-        var parts = inputMove.split(" "); // Split the input by spaces
+        var parts = inputMove.split(" ");
 
         if (parts.length == 2) {
           try {
             int x = int.parse(parts[0]);
             int y = int.parse(parts[1]);
 
-            // Validate input range and return the coordinates if valid
             if ((x >= xLowerRange && x <= xHigherRange) && (y >= yLowerRange && y <= yHigherRange)) {
               print("You entered: x = $x, y = $y");
               return [x, y];
@@ -82,26 +90,30 @@ class OmokView {
     }
   }
 
-  // Method to display error messages
+  /// Displays an error message.
+  ///
+  /// [message] is the error message to be displayed.
   void displayError(String message) {
-    print("Error: $message"); // Print error message
+    print("Error: $message");
   }
 
-  // Method to confirm the game creation with the selected strategy
+  /// Displays a message confirming the creation of a new game.
+  ///
+  /// [strategy] is the selected strategy for the game.
   void displayGameCreation(String strategy) {
-    print(
-        "Creating new game with strategy: $strategy"); // Print game creation message
+    print("Creating new game with strategy: $strategy");
   }
 
+  /// Displays the current state of the game board.
+  ///
+  /// [board] is a 2D list representing the current game state.
   void displayBoard(List<List<String>> board) {
-    // Print column headers
     stdout.write("    ");
     for (int i = 1; i <= board.length; i++) {
       stdout.write('${i.toString().padLeft(2)} ');
     }
     print('');
 
-    // Print rows with row numbers
     for (int i = 0; i < board.length; i++) {
       stdout.write('${(i + 1).toString().padLeft(2)}  ');
       for (int j = 0; j < board[i].length; j++) {
@@ -111,10 +123,26 @@ class OmokView {
     }
   }
 
-  void displayGameResult(String result) {
+  /// Displays the result of the game and highlights the winning row.
+  ///
+  /// [result] is the final result message.
+  /// [board] is the current state of the board.
+  /// [winningRow] contains the coordinates of the winning row.
+  void displayGameResult(String result, List<List<String>> board, List<int>? winningRow) {
     print('Game Over: $result');
+    if (winningRow != null) {
+      for (var index in winningRow) {
+        int x = index ~/ board.length;
+        int y = index % board.length;
+        board[x][y] = board[x][y].toUpperCase();
+      }
+    }
+    displayBoard(board);
   }
 
+  /// Highlights the winning row.
+  ///
+  /// [winningRow] contains the coordinates of the winning row.
   void highlightWinningRow(List<int> winningRow) {
     print('Winning row: $winningRow');
   }
