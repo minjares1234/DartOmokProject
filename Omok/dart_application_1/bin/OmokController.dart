@@ -9,7 +9,6 @@ class OmokController {
 
   OmokController(this.model, this.view, this.b);
 
-
   Future<void> startGame() async {
     while (true) {
       var userUrl = view.promptForURL("https://www.cs.utep.edu/cheon/cs3360/project/omok");
@@ -38,12 +37,22 @@ class OmokController {
       while (true) {
         view.displayBoard(b.board);
         List<int> move = view.promptMove(b);
-        if (b.isEmpty(move[0], move[1])) {
-          b.placeStone(move[0], move[1], 'O');
-          var response = await model.makeMove(move[0], move[1]);
+
+        // Adjust indices to be zero-based
+        int x = move[0] - 1;
+        int y = move[1] - 1;
+
+        if (b.isEmpty(y, x)) { // Correct the order to y (row), x (column)
+          b.placeStone(y, x, 'O'); // Place player's stone on the board
+          var response = await model.makeMove(x, y); // Ensure correct parameter order
 
           if (response['response']) {
-            b.placeStone(response['move']['x'], response['move']['y'], 'X');
+            int compX = response['move']['x'];
+            int compY = response['move']['y'];
+            b.placeStone(compY, compX, 'X'); // Place computer's stone on the board
+
+            view.displayBoard(b.board); // Display updated board
+
             if (response['ack_move']['isWin'] == true) {
               view.displayGameResult('You win!');
               view.highlightWinningRow(response['ack_move']['row']);
@@ -60,15 +69,12 @@ class OmokController {
             view.displayError(response['reason']);
           }
         } else {
-          print("Error: Place not empty, (${move[0] + 1}, ${move[1] + 1})");
+          print("Error: Place not empty, (${y + 1}, ${x + 1})");
         }
       }
     } catch (e) {
       view.displayError(e.toString());
     }
   }
-
-
-
-
 }
+
