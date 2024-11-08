@@ -1,31 +1,16 @@
+
+import 'Board.dart';
+
 import 'OmokModel.dart';
 import 'OmokView.dart';
 import 'OmokController.dart';
 import 'Board.dart';
 
-// OmokMain class to initialize and start the Omok game
-class OmokMain {
-  final OmokModel model;
-  final OmokView view;
-  final OmokController controller;
-  final Board board;
-
-  // Constructor that initializes MVC components
-  OmokMain()
-      : model = OmokModel(),
-        view = OmokView(),
-        board = Board(),
-        controller = OmokController(OmokModel(), OmokView(), Board());
-  // Start method to begin the game process
-  Future<void> start() async {
-    await controller.startGame(); // Start game by calling controller's method
-    controller.moveTile();
-  }
-}
-
 void main() async {
-  OmokMain game =  OmokMain(); // Start game by calling controller's method
+  var model = OmokModel("https://www.cs.utep.edu/cheon/cs3360/project/omok");
+  var view = OmokView();
+  var board = Board(15);
+  var controller = OmokController(model, view, board);
 
-  game.start();
-
+  await controller.startGame();
 }
