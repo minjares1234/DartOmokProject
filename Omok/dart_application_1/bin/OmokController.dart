@@ -61,14 +61,14 @@ class OmokController {
 
             // Check if the game has ended with a win or draw.
             if (response['ack_move']['isWin'] == true) {
-              view.displayGameResult('You win!');
+              //view.displayGameResult('You win!');
               view.highlightWinningRow(response['ack_move']['row']);
               break;
             } else if (response['ack_move']['isDraw'] == true) {
-              view.displayGameResult('It\'s a draw!');
+              //view.displayGameResult('It\'s a draw!');
               break;
             } else if (response['move']['isWin'] == true) {
-              view.displayGameResult('Computer wins!');
+              //view.displayGameResult('Computer wins!');
               view.highlightWinningRow(response['move']['row']);
               break;
             }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'OmokView.dart';
+
 
 /// The `OmokModel` class handles communication with the Omok game server.
 /// It manages fetching strategies, starting new games, validating URLs, and making moves.

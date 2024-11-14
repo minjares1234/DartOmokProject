@@ -28,7 +28,7 @@ class Board {
   /// Returns `true` if the stone was successfully placed; `false` otherwise.
   bool placeStone(int x, int y, String stone) {
     if (x >= xRange[0] && x <= xRange[1] && y >= yRange[0] && y <= yRange[1] && board[x][y] == '.') {
-      board[x][y] = stone;
+      board[x - 1][y - 1] = stone;
       return true;
     }
     return false; // Return false if the move is invalid or the spot is occupied.
